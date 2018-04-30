@@ -1,0 +1,3 @@
+tus_upload_options:
+    path: /
+    controller: FeldsTusServerBundle:Upload:options
