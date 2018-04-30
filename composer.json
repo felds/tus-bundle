@@ -8,8 +8,12 @@
             "email": "dev@felds.com.br"
         }
     ],
-    "require": {},
+    "require": {
+        "symfony/http-foundation": "^4.0"
+    },
     "autoload": {
-        "prs-4": {"Felds\\TusServerBundle\\": ""}
+        "psr-4": {
+            "Felds\\TusServerBundle\\": ""
+        }
     }
 }
