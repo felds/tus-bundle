@@ -1,0 +1,15 @@
+{
+    "name": "felds/tus-server-bundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Felds Liscia",
+            "email": "dev@felds.com.br"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "prs-4": {"Felds\\TusServerBundle\\": ""}
+    }
+}
