@@ -5,3 +5,7 @@ services:
             $class: '%felds_tus_server.entity_class%'
             $expiration: '%felds_tus_server.expiration%'
 
+    Felds\TusServerBundle\Controller\:
+        autowire: true
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Felds\TusServerBundle\Controller;
 
+use Felds\TusServerBundle\Model\UploadManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,7 +14,17 @@ class UploadController
 {
     const TUS_VERSION = '1.0.0';
     const EXTENSIONS = ['creation', 'expiration', 'termination'];
-    const MAX_SIZE = 3221225472; // (1024 ** 3) * 3 == 3GB
+    const MAX_SIZE = 3221225472;
+
+    /**
+     * @var UploadManager
+     */
+    private $manager;
+
+    public function __construct(UploadManager $manager)
+    {
+        $this->manager = $manager;
+    }
 
     public function optionsAction()
     {
