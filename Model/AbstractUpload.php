@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Felds\TusServerBundle\Model;
 
-use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
@@ -11,8 +10,6 @@ use RuntimeException;
 
 abstract class AbstractUpload
 {
-    const EXPIRATION = '+1 day';
-
     /**
      * @var string
      * @ORM\Column()
@@ -26,7 +23,7 @@ abstract class AbstractUpload
     private $totalBytes;
 
     /**
-     * @var string
+     * @var string|null
      * @ORM\Column(nullable=true)
      */
     private $originalFilename;
@@ -44,8 +41,8 @@ abstract class AbstractUpload
     private $uploadedBytes;
 
     /**
-     * @var DateTimeInterface
-     * @ORM\Column(type="datetime_immutable")
+     * @var DateTimeInterface|null
+     * @ORM\Column(type="datetime_immutable", nullable=true)
      */
     private $expiresAt;
 
@@ -57,7 +54,6 @@ abstract class AbstractUpload
     {
         $this->path = $path;
         $this->uploadedBytes = 0;
-        $this->expiresAt = new DateTimeImmutable(static::EXPIRATION);
     }
 
     /**

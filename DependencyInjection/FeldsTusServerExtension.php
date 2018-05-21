@@ -10,8 +10,12 @@ class FeldsTusServerExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
+        $alias = $this->getAlias();
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+
+        $container->setParameter("{$alias}.entity_class", $config['entity_class']);
+        $container->setParameter("{$alias}.expiration", $config['expiration']);
 
         // var_dump($config, $container);
         // die;
