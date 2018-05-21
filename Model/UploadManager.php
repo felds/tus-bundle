@@ -14,11 +14,19 @@ final class UploadManager
 
     public function __construct(string $class, $expiration = null)
     {
-        if (!$class instanceof AbstractUpload) {
-            $correctClass = AbstractUpload::class;
-            throw new InvalidArgumentException("{$class} must extend {$correctClass}");
-        }
+        $this->checkClass($class);
 
         $this->class = $class;
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    private static function checkClass(string $class): void
+    {
+        $correctClass = AbstractUpload::class;
+        if (!is_subclass_of($class, $correctClass)) {
+            throw new InvalidArgumentException("{$class} must extend {$correctClass}");
+        }
     }
 }
