@@ -12,7 +12,7 @@ final class UploadManager
      */
     private $class;
 
-    public function __construct(string $class)
+    public function __construct(string $class, $expiration = null)
     {
         if (!$class instanceof AbstractUpload) {
             $correctClass = AbstractUpload::class;

@@ -1,0 +1,7 @@
+services:
+    Felds\TusServerBundle\Model\UploadManager:
+        public: true
+        arguments:
+            $class: '%felds_tus_server.entity_class%'
+            $expiration: '%felds_tus_server.expiration%'
+
