@@ -9,9 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use RuntimeException;
 
-/**
- * @ORM\Entity()
- */
 abstract class AbstractUpload
 {
     const EXPIRATION = '+1 day';
