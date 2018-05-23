@@ -8,6 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use RuntimeException;
 
+/**
+ * @ORM\Entity()
+ */
 abstract class AbstractUpload
 {
     /**
@@ -55,6 +58,8 @@ abstract class AbstractUpload
         $this->path = $path;
         $this->uploadedBytes = 0;
     }
+
+    abstract public function getId();
 
     /**
      * @return string
@@ -135,15 +140,15 @@ abstract class AbstractUpload
     /**
      * @return DateTimeInterface
      */
-    public function getExpiresAt(): DateTimeInterface
+    public function getExpiresAt(): ?DateTimeInterface
     {
         return $this->expiresAt;
     }
 
     /**
-     * @param DateTimeInterface $expiresAt
+     * @param DateTimeInterface|null $expiresAt
      */
-    public function setExpiresAt(DateTimeInterface $expiresAt): void
+    public function setExpiresAt(?DateTimeInterface $expiresAt): void
     {
         $this->expiresAt = $expiresAt;
     }

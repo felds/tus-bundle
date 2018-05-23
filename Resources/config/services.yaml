@@ -4,6 +4,7 @@ services:
         arguments:
             $class: '%felds_tus_server.entity_class%'
             $expiration: '%felds_tus_server.expiration%'
+            $em: '@Doctrine\ORM\EntityManagerInterface' #TODO customize connection
 
     Felds\TusServerBundle\Controller\:
         autowire: true
