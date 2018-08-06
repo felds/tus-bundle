@@ -79,8 +79,9 @@ class UploadController
                 Response::HTTP_REQUEST_ENTITY_TOO_LARGE
             );
         } else {
+            /** @var AbstractUpload $entity */
             $entity = $this->manager->createUpload();
-            $entity->setOriginalFilename(@$meta['name']);
+            $entity->setOriginalFilename(@$meta['filename']);
             $entity->setMimeType(@$meta['type']);
             $entity->setTotalBytes($totalBytes);
 

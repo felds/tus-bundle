@@ -92,7 +92,7 @@ abstract class AbstractUpload
     /**
      * @return string
      */
-    public function getOriginalFilename(): string
+    public function getOriginalFilename(): ?string
     {
         return $this->originalFilename;
     }
@@ -100,7 +100,7 @@ abstract class AbstractUpload
     /**
      * @param string $originalFilename
      */
-    public function setOriginalFilename(string $originalFilename): void
+    public function setOriginalFilename(?string $originalFilename): void
     {
         $this->originalFilename = $originalFilename;
     }
@@ -108,7 +108,7 @@ abstract class AbstractUpload
     /**
      * @return string
      */
-    public function getMimeType(): string
+    public function getMimeType(): ?string
     {
         return $this->mimeType;
     }
@@ -116,7 +116,7 @@ abstract class AbstractUpload
     /**
      * @param string $mimeType
      */
-    public function setMimeType(string $mimeType): void
+    public function setMimeType(?string $mimeType): void
     {
         $this->mimeType = $mimeType;
     }
