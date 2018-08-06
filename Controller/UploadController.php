@@ -65,7 +65,7 @@ class UploadController
     {
         $meta = MetadataParser::parse($request->headers->get('Upload-Metadata'));
 
-        $totalBytes = ($request->headers->get('Upload-Defer-Length') === 1)
+        $totalBytes = ($request->headers->get('Upload-Defer-Length') === "1")
             ? null
             : (int)$request->headers->get('Upload-Length');
 
