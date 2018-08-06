@@ -75,7 +75,7 @@ class UploadController
 
         if ($totalBytes > self::MAX_SIZE) {
             return new Response(
-                "The maximum entity size ".self::MAX_SIZE." is bytes.",
+                "The maximum entity size " . self::MAX_SIZE . " is bytes.",
                 Response::HTTP_REQUEST_ENTITY_TOO_LARGE
             );
         } else {
@@ -114,6 +114,7 @@ class UploadController
      */
     public function patchAction(AbstractUpload $entity)
     {
-        dump($entity); die;
+        dump($entity);
+        die;
     }
 }
