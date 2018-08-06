@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Felds\TusServerBundle\Controller;
 
-use Felds\TusServerBundle\Model\AbstractUpload;
-use Felds\TusServerBundle\Model\UploadManager;
+use Felds\TusServerBundle\Entity\AbstractUpload;
+use Felds\TusServerBundle\UploadManager;
 use Felds\TusServerBundle\Util\MetadataParser;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;

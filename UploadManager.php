@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Felds\TusServerBundle\Model;
+namespace Felds\TusServerBundle;
 
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;

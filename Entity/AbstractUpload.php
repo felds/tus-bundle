@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Felds\TusServerBundle\Model;
+namespace Felds\TusServerBundle\Entity;
 
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -9,7 +9,7 @@ use Exception;
 use RuntimeException;
 
 /**
- * @ORM\Entity()
+ * @ORM\MappedSuperclass()
  */
 abstract class AbstractUpload
 {

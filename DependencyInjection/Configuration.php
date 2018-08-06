@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('entity_class')
                     ->isRequired()
                     ->cannotBeEmpty()
-                    ->info("Your entity class. It must extend Felds\\TusServerBundle\\Model\\AbstractUpload")
+                    ->info("Your entity class. It must extend Felds\\TusServerBundle\\Entity\\AbstractUpload")
                     ->example("App\\Entity\\Upload")
                 ->end()
                 ->scalarNode('expiration')
