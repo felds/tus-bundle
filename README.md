@@ -25,6 +25,6 @@ On your app's routes configuration, import the bundle's `Controller` folder unde
 # config/routes.yaml
 felds_tus_server_bundle:
     resource: "@FeldsTusServerBundle/Controller/"
-    prefix: tus
+    prefix: /tus  # or you prefix of choice
     type: annotation
 ```
