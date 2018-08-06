@@ -141,12 +141,54 @@ class UploadController
 
 
     /**
+     * Send content to be appended to the upload.
+     *
      * @Route("/{id}", methods={"PATCH"})
-     * @param AbstractUpload $entity
+     * @param Request $request
+     * @param mixed $id
+     * @return Response
      */
-    public function patchAction(AbstractUpload $entity)
+    public function sendAction(Request $request, $id)
     {
-        dump($entity);
-        die;
+        $entity = $this->manager->find($id);
+        if (!$entity) {
+            throw new NotFoundHttpException();
+        }
+
+        $f = fopen($entity->getPath(), 'a');
+        stream_copy_to_stream($request->getContent(true), $f);
+        fclose($f);
+
+        $entity->setUploadedBytes(filesize($entity->getPath()));
+
+        $this->manager->save($entity);
+
+        return new Response('', Response::HTTP_NO_CONTENT, [
+            'Tus-Resumable' => self::TUS_VERSION,
+            'Upload-Offset' => $entity->getUploadedBytes(),
+            'Upload-Expires' => $entity->getExpiresAt()->format(DATE_RFC7231),
+        ]);
+    }
+
+    /**
+     * Cancel the download and cleanup resources.
+     *
+     * @Route("/{id}", methods={"DELETE"})
+     * @param Request $request
+     * @param mixed $id
+     * @return Response
+     */
+    public function deleteAction(Request $request, $id)
+    {
+        $entity = $this->manager->find($id);
+        if ($entity) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->manager->remove($entity);
+
+        return new Response('', Response::HTTP_NO_CONTENT, [
+            'Tus-Resumable' => self::TUS_VERSION,
+        ]);
     }
 }

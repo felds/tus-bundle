@@ -59,4 +59,10 @@ final class UploadManager
     {
         return $this->em->find($this->class, $id);
     }
+
+    public function remove(AbstractUpload $entity): void
+    {
+        $this->em->remove($entity);
+        $this->em->flush();
+    }
 }
