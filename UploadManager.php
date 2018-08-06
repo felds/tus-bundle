@@ -54,4 +54,9 @@ final class UploadManager
             $this->em->flush();
         }
     }
+
+    public function find($id): ?AbstractUpload
+    {
+        return $this->em->find($this->class, $id);
+    }
 }

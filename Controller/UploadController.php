@@ -9,6 +9,7 @@ use Felds\TusServerBundle\Util\MetadataParser;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -108,6 +109,36 @@ class UploadController
             return $response;
         }
     }
+
+    /**
+     * Check the status of the upload.
+     *
+     * @Route("/{id}", methods={"HEAD"})
+     * @param mixed $id
+     * @return Response
+     */
+    public function statusAction($id)
+    {
+        $entity = $this->manager->find($id);
+        if (!$entity) {
+            throw new NotFoundHttpException();
+        }
+
+        $headers = [
+            'Tus-Resumable' => self::TUS_VERSION,
+            'Cache-Control' => 'no-store',
+            'Upload-Offset' => $entity->getUploadedBytes(),
+        ];
+
+        if ($entity->getTotalBytes() === null) {
+            $headers['Upload-Defer-Length'] = 1;
+        } else {
+            $headers['Upload-Length'] = $entity->getTotalBytes();
+        }
+
+        return new Response('', Response::HTTP_OK, $headers);
+    }
+
 
     /**
      * @Route("/{id}", methods={"PATCH"})
