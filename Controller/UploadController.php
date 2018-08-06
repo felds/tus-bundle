@@ -9,10 +9,13 @@ use Felds\TusServerBundle\Util\MetadataParser;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @TODO Config max size (maybe it should be in the entity?)
+ *
+ * @Route("/")
  */
 class UploadController
 {
@@ -36,6 +39,9 @@ class UploadController
         $this->router = $router;
     }
 
+    /**
+     * @Route("/", methods={"OPTIONS"})
+     */
     public function optionsAction()
     {
         return new Response(
@@ -50,6 +56,10 @@ class UploadController
 
     /**
      * Create an upload and return the patch url.
+     *
+     * @Route("/", methods={"POST"})
+     * @param Request $request
+     * @return Response
      */
     public function createAction(Request $request)
     {
@@ -98,6 +108,10 @@ class UploadController
         }
     }
 
+    /**
+     * @Route("/{id}", methods={"PATCH"})
+     * @param AbstractUpload $entity
+     */
     public function patchAction(AbstractUpload $entity)
     {
         dump($entity); die;

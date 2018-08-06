@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Felds\TusServerBundle;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Felds\TusServerBundle\Entity\AbstractUpload;
 use InvalidArgumentException;
 
 final class UploadManager
