@@ -97,7 +97,7 @@ class UploadController
             $response = new Response(
                 '', Response::HTTP_CREATED, [
                     'Tus-Resumable' => self::TUS_VERSION,
-                    'Location' => $this->router->generate('tus_upload_patch', ['id' => $entity->getId()]),
+                    'Location' => $this->router->generate('felds_tusserver_upload_patch', ['id' => $entity->getId()]),
                 ]
             );
 
