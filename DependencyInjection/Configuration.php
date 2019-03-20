@@ -33,7 +33,7 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                     ->info("Max size of the file to be uploaded (in bytes)")
-                    ->example("2GB = 1024^3 * 2 = 2147483648")
+                    ->example("2GB # = 1024^3 * 2 = 2147483648")
                 ->end()
             ->end()
         ;

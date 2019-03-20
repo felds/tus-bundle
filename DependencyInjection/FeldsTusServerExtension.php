@@ -20,8 +20,10 @@ class FeldsTusServerExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        // put the configured values in named parameters
         $container->setParameter("{$alias}.entity_class", $config['entity_class']);
-        $container->setParameter("{$alias}.expiration", $config['expiration']);
+        $container->setParameter("{$alias}.expires_in", $config['expires_in']);
+        $container->setParameter("{$alias}.max_size", $config['max_size']);
 
         // load the services
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));

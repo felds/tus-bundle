@@ -5,7 +5,6 @@ namespace Felds\TusServerBundle\Model;
 
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Exception;
 use RuntimeException;
 
 /**
@@ -51,7 +50,6 @@ abstract class AbstractUpload
 
     /**
      * @param string $path The path to the file that will hold the upload.
-     * @throws Exception
      */
     public function __construct(string $path)
     {
