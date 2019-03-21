@@ -13,7 +13,7 @@ abstract class MetadataParser
      */
     public static function parse(string $metadata): array
     {
-        $records = explode(',', $metadata);
+        $records = preg_split('{,}', $metadata, -1, PREG_SPLIT_NO_EMPTY);
 
         return array_reduce(
             $records,

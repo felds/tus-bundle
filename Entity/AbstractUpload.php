@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Felds\TusServerBundle\Model;
+namespace Felds\TusServerBundle\Entity;
 
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Entity;
 use RuntimeException;
 
 /**
- * @ORM\Entity()
+ * @ORM\MappedSuperclass()
  */
 abstract class AbstractUpload
 {
@@ -96,9 +97,9 @@ abstract class AbstractUpload
     }
 
     /**
-     * @param string $originalFilename
+     * @param string|null $originalFilename
      */
-    public function setOriginalFilename(string $originalFilename): void
+    public function setOriginalFilename(?string $originalFilename): void
     {
         $this->originalFilename = $originalFilename;
     }
@@ -112,9 +113,9 @@ abstract class AbstractUpload
     }
 
     /**
-     * @param string $mimeType
+     * @param string|null $mimeType
      */
-    public function setMimeType(string $mimeType): void
+    public function setMimeType(?string $mimeType): void
     {
         $this->mimeType = $mimeType;
     }

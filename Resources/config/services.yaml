@@ -1,9 +1,10 @@
 services:
-    Felds\TusServerBundle\Model\UploadManager:
+    Felds\TusServerBundle\Entity\UploadManager:
         public: true
         arguments:
             $class: '%felds_tus_server.entity_class%'
-            $expiration: '%felds_tus_server.expiration%'
+            $expiresIn: '%felds_tus_server.expires_in%'
+            $maxSize: '%felds_tus_server.max_size%'
             $em: '@Doctrine\ORM\EntityManagerInterface' #TODO customize connection
 
     Felds\TusServerBundle\Controller\:

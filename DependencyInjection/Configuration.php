@@ -21,7 +21,7 @@ class Configuration implements ConfigurationInterface
                     ->info("Your entity class. It must extend Felds\\TusServerBundle\\Model\\AbstractUpload")
                     ->example("App\\Entity\\Upload")
                 ->end()
-                ->scalarNode('expiration')
+                ->scalarNode('expires_in')
                     ->defaultNull()
                     ->info(
                         "Default expiration for the upload URL".

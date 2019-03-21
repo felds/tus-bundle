@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Felds\TusServerBundle\Controller;
 
-use Felds\TusServerBundle\Model\AbstractUpload;
-use Felds\TusServerBundle\Model\UploadManager;
+use Felds\TusServerBundle\Entity\AbstractUpload;
+use Felds\TusServerBundle\Entity\UploadManager;
 use Felds\TusServerBundle\Util\MetadataParser;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +17,7 @@ use Symfony\Component\Routing\RouterInterface;
 class UploadController
 {
     const TUS_VERSION = '1.0.0';
-    const EXTENSIONS = ['creation', 'expiration', 'termination'];
+    const EXTENSIONS = ['creation', 'expiration'];
     const MAX_SIZE = 3221225472;
 
     /**
@@ -42,7 +42,7 @@ class UploadController
             '', Response::HTTP_NO_CONTENT, [
                 'Tus-Resumable' => self::TUS_VERSION,
                 'Tus-Version' => self::TUS_VERSION,
-                'Tus-Max-Size' => self::MAX_SIZE,
+                'Tus-Max-Size' => $this->getMaxSize(),
                 'Tus-Extension' => implode(',', self::EXTENSIONS),
             ]
         );
@@ -53,7 +53,10 @@ class UploadController
      */
     public function createAction(Request $request)
     {
-        $meta = MetadataParser::parse($request->headers->get('Upload-Metadata'));
+        $rawMeta = $request->headers->get('Upload-Metadata');
+        $meta = MetadataParser::parse($rawMeta ?? '');
+
+        // @TODO validate required metadata
 
         $totalBytes = ($request->headers->get('Upload-Defer-Length') === 1)
             ? null
@@ -70,14 +73,14 @@ class UploadController
             );
         } else {
             $entity = $this->manager->createUpload();
-            $entity->setOriginalFilename(@$meta['name']);
-            $entity->setMimeType(@$meta['type']);
+            $entity->setOriginalFilename($meta['name'] ?? null);
+            $entity->setMimeType($meta['type'] ?? null);
             $entity->setTotalBytes($totalBytes);
 
             // Create the file
             // Btw, is this the right place to create the file?
             // @TODO return an actual response in case of failure
-            if (!touch($entity->getPath())) {
+            if ( ! touch($entity->getPath())) {
                 throw new RuntimeException("Unable to create file: {$entity->getPath()}");
             }
 
@@ -100,6 +103,12 @@ class UploadController
 
     public function patchAction(AbstractUpload $entity)
     {
-        dump($entity); die;
+        dump($entity);
+        die;
+    }
+
+    public function getMaxSize(): int
+    {
+        return self::MAX_SIZE;
     }
 }

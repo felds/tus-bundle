@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Felds\TusServerBundle\Model;
+namespace Felds\TusServerBundle\Entity;
 
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
@@ -18,11 +18,27 @@ final class UploadManager
      */
     private $em;
 
-    public function __construct(string $class, $expiration = null, EntityManagerInterface $em)
-    {
+    /**
+     * @var string|null
+     */
+    private $expiresIn;
+
+    /**
+     * @var string|null
+     */
+    private $maxSize;
+
+    public function __construct(
+        string $class,
+        ?string $expiresIn,
+        ?string $maxSize,
+        EntityManagerInterface $em
+    ) {
         $this->checkClass($class);
 
         $this->class = $class;
+        $this->expiresIn = $expiresIn;
+        $this->maxSize = $maxSize;
         $this->em = $em;
     }
 
@@ -33,7 +49,7 @@ final class UploadManager
     {
         $correctClass = AbstractUpload::class;
 
-        if (!is_subclass_of($class, $correctClass)) {
+        if ( ! is_subclass_of($class, $correctClass)) {
             throw new InvalidArgumentException("{$class} must extend {$correctClass}");
         }
     }
