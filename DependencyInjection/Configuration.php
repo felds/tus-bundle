@@ -22,9 +22,9 @@ class Configuration implements ConfigurationInterface
                     ->example("App\\Entity\\Upload")
                 ->end()
                 ->scalarNode('expires_in')
-                    ->defaultNull()
+                    ->isRequired()
                     ->info(
-                        "Default expiration for the upload URL".
+                        "The expiration for the upload URL".
                         "\nIt can be a number of seconds or a relative date string to be added to the current time"
                     )
                     ->example("1 day")
