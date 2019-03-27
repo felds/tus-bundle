@@ -5,7 +5,6 @@ namespace Felds\TusServerBundle\Entity;
 
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\Entity;
 use RuntimeException;
 
 /**
@@ -44,17 +43,18 @@ abstract class AbstractUpload
     private $uploadedBytes;
 
     /**
-     * @var DateTimeInterface|null
-     * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @var DateTimeInterface
+     * @ORM\Column(type="datetime_immutable")
      */
     private $expiresAt;
 
     /**
      * @param string $path The path to the file that will hold the upload.
      */
-    public function __construct(string $path)
+    public function __construct(string $path, DateTimeInterface $expiresAt)
     {
         $this->path = $path;
+        $this->expiresAt = $expiresAt;
         $this->uploadedBytes = 0;
     }
 
@@ -139,16 +139,8 @@ abstract class AbstractUpload
     /**
      * @return DateTimeInterface
      */
-    public function getExpiresAt(): ?DateTimeInterface
+    public function getExpiresAt(): DateTimeInterface
     {
         return $this->expiresAt;
-    }
-
-    /**
-     * @param DateTimeInterface|null $expiresAt
-     */
-    public function setExpiresAt(?DateTimeInterface $expiresAt): void
-    {
-        $this->expiresAt = $expiresAt;
     }
 }

@@ -101,10 +101,77 @@ class UploadController
         }
     }
 
-    public function patchAction(AbstractUpload $entity)
+    /**
+     * Send content to be appended to the upload.
+     *
+     * @param Request $request
+     * @param mixed $id
+     * @return Response
+     */
+    public function patchAction(Request $request, $id)
     {
-        dump($entity);
-        die;
+        $entity = $this->manager->findUpload($id);
+
+        $f = fopen($entity->getPath(), 'a');
+        stream_copy_to_stream($request->getContent(true), $f);
+        fclose($f);
+
+        $entity->setUploadedBytes(filesize($entity->getPath()));
+
+        $this->manager->save($entity);
+
+        $headers = [
+            'Tus-Resumable' => self::TUS_VERSION,
+            'Upload-Offset' => $entity->getUploadedBytes(),
+        ];
+        if ($entity->getExpiresAt()) {
+            $headers['Upload-Expires'] = $entity->getExpiresAt()->format(DATE_RFC7231);
+        }
+
+        return new Response('', Response::HTTP_NO_CONTENT, $headers);
+    }
+
+    /**
+     * Check the status of the upload.
+     *
+     * @param Request $request
+     * @param mixed $id
+     * @return Response
+     */
+    public function sendHeadAction(Request $request, $id)
+    {
+        $entity = $this->manager->findUpload($id);
+
+        $headers = [
+            'Tus-Resumable' => self::TUS_VERSION,
+            'Cache-Control' => 'no-store',
+            'Upload-Offset' => $entity->getUploadedBytes(),
+        ];
+
+        if ($entity->getTotalBytes() === null) {
+            $headers['Upload-Defer-Length'] = 1;
+        } else {
+            $headers['Upload-Length'] = $entity->getTotalBytes();
+        }
+
+        return new Response('', Response::HTTP_OK, $headers);
+    }
+
+    /**
+     * Cancel the download and cleanup resources.
+     *
+     * @param Request $request
+     * @param mixed $id
+     * @return Response
+     */
+    public function deleteAction(Request $request, $id)
+    {
+        $entity = $this->manager->findUpload($id);
+        $this->manager->remove($entity);
+
+        return new Response('', Response::HTTP_NO_CONTENT, [
+            'Tus-Resumable' => self::TUS_VERSION,
+        ]);
     }
 
     public function getMaxSize(): int

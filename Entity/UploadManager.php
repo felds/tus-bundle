@@ -54,11 +54,15 @@ final class UploadManager
         }
     }
 
+    /**
+     * @throws \Exception When failed to create an expiration time.
+     */
     public function createUpload(): AbstractUpload
     {
         $path = tempnam(sys_get_temp_dir(), 'tus/');
+        $expiresAt = new \DateTimeImmutable($this->expiresIn);
 
-        return new $this->class($path);
+        return new $this->class($path, $expiresAt);
     }
 
     public function save(AbstractUpload $entity, bool $andFlush = true): void
@@ -68,5 +72,19 @@ final class UploadManager
         if ($andFlush) {
             $this->em->flush();
         }
+    }
+
+    public function findUpload($id): AbstractUpload
+    {
+        return $this->em->find($this->class, $id);
+    }
+
+    /**
+     * @TODO remove file from disk
+     */
+    public function remove(AbstractUpload $entity): void
+    {
+        $this->em->remove($entity);
+        $this->em->flush();
     }
 }
