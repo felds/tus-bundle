@@ -32,8 +32,7 @@ class Configuration implements ConfigurationInterface
                     ->example("1 day")
                 ->end()
                 ->scalarNode('max_size')
-                    ->isRequired()
-                    ->cannotBeEmpty()
+                    ->defaultNull()
                     ->validate()
                         ->ifTrue(function ($str) {
                             try {

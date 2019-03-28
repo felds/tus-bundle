@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Felds\TusServerBundle\Entity;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Felds\SizeStrToBytes\SizeStrToBytes;
 use InvalidArgumentException;
 
 final class UploadManager
@@ -38,7 +39,7 @@ final class UploadManager
 
         $this->class = $class;
         $this->expiresIn = $expiresIn;
-        $this->maxSize = $maxSize;
+        $this->maxSize = SizeStrToBytes::convert($maxSize ?? "0");
         $this->em = $em;
     }
 
