@@ -39,7 +39,7 @@ final class UploadManager
 
         $this->class = $class;
         $this->expiresIn = $expiresIn;
-        $this->maxSize = SizeStrToBytes::convert($maxSize ?? "0");
+        $this->maxSize = $maxSize ? SizeStrToBytes::convert($maxSize) : null;
         $this->em = $em;
     }
 
