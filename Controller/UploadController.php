@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Felds\TusServerBundle\Controller;
 
-use Felds\TusServerBundle\Entity\AbstractUpload;
 use Felds\TusServerBundle\Entity\UploadManager;
 use Felds\TusServerBundle\Util\MetadataParser;
 use RuntimeException;
@@ -18,7 +17,6 @@ class UploadController
 {
     const TUS_VERSION = '1.0.0';
     const EXTENSIONS = ['creation', 'expiration'];
-    const MAX_SIZE = 3221225472;
 
     /**
      * @var UploadManager
@@ -38,14 +36,17 @@ class UploadController
 
     public function optionsAction()
     {
-        return new Response(
-            '', Response::HTTP_NO_CONTENT, [
-                'Tus-Resumable' => self::TUS_VERSION,
-                'Tus-Version' => self::TUS_VERSION,
-                'Tus-Max-Size' => $this->getMaxSize(),
-                'Tus-Extension' => implode(',', self::EXTENSIONS),
-            ]
-        );
+        $headers = [
+            'Tus-Resumable' => self::TUS_VERSION,
+            'Tus-Version' => self::TUS_VERSION,
+            'Tus-Extension' => implode(',', self::EXTENSIONS),
+        ];
+
+        if ($this->manager->getMaxSize() !== null) {
+            $headers['Tus-Max-Size'] = $this->manager->getMaxSize();
+        }
+
+        return new Response('', Response::HTTP_NO_CONTENT, $headers);
     }
 
     /**
@@ -66,9 +67,10 @@ class UploadController
             return new Response("Invalid upload length: {$totalBytes} bytes.", Response::HTTP_BAD_REQUEST);
         }
 
-        if ($totalBytes > self::MAX_SIZE) {
+        $maxSize = $this->manager->getMaxSize();
+        if (false && $maxSize && $totalBytes > $maxSize) {
             return new Response(
-                "The maximum entity size ".self::MAX_SIZE." is bytes.",
+                "The maximum entity size is {$maxSize} bytes.",
                 Response::HTTP_REQUEST_ENTITY_TOO_LARGE
             );
         } else {
@@ -107,6 +109,8 @@ class UploadController
      * @param Request $request
      * @param mixed $id
      * @return Response
+     *
+     * @TODO cut off the upload when it exceeds the declared length
      */
     public function patchAction(Request $request, $id)
     {
@@ -172,10 +176,5 @@ class UploadController
         return new Response('', Response::HTTP_NO_CONTENT, [
             'Tus-Resumable' => self::TUS_VERSION,
         ]);
-    }
-
-    public function getMaxSize(): int
-    {
-        return self::MAX_SIZE;
     }
 }

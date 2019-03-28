@@ -88,4 +88,9 @@ final class UploadManager
         $this->em->remove($entity);
         $this->em->flush();
     }
+
+    public function getMaxSize(): ?int
+    {
+        return $this->maxSize;
+    }
 }
