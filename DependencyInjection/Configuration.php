@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Felds\TusServerBundle\DependencyInjection;
 
+use Felds\SizeStrToBytes\Exception\BadFormat;
+use Felds\SizeStrToBytes\SizeStrToBytes;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -32,8 +34,19 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('max_size')
                     ->isRequired()
                     ->cannotBeEmpty()
+                    ->validate()
+                        ->ifTrue(function ($str) {
+                            try {
+                                SizeStrToBytes::convert($str);
+                                return false;
+                            } catch (BadFormat $err) {
+                                return true;
+                            }
+                        })
+                        ->thenInvalid("Invalid size format %s")
+                    ->end()
                     ->info("Max size of the file to be uploaded (in bytes)")
-                    ->example("2GB # = 1024^3 * 2 = 2147483648")
+                    ->example("2G # = 2 * 1024^3 = 2147483648")
                 ->end()
             ->end()
         ;
