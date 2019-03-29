@@ -1,5 +1,5 @@
 services:
-    Felds\TusServerBundle\Entity\UploadManager:
+    Felds\TusServerBundle\UploadManager:
         public: true
         arguments:
             $class: '%felds_tus_server.entity_class%'

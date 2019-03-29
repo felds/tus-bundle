@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Felds\TusServerBundle\Entity;
+namespace Felds\TusServerBundle;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Felds\SizeStrToBytes\SizeStrToBytes;
+use Felds\TusServerBundle\Entity\AbstractUpload;
 use InvalidArgumentException;
 
 final class UploadManager
@@ -55,9 +56,6 @@ final class UploadManager
         }
     }
 
-    /**
-     * @throws \Exception When failed to create an expiration time.
-     */
     public function createUpload(): AbstractUpload
     {
         $path = tempnam(sys_get_temp_dir(), 'tus/');

@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Felds\TusServerBundle\Controller;
 
-use Felds\TusServerBundle\Entity\UploadManager;
+use Felds\TusServerBundle\UploadManager;
 use Felds\TusServerBundle\Util\MetadataParser;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
@@ -31,73 +30,58 @@ class UploadController
         $this->router = $router;
     }
 
-    public function optionsAction()
+    public function options(Request $request)
     {
-        $headers = [
-            'Tus-Resumable' => self::TUS_VERSION,
-            'Tus-Version' => self::TUS_VERSION,
-            'Tus-Extension' => implode(',', self::EXTENSIONS),
-        ];
+        $response = new Response('', Response::HTTP_NO_CONTENT);
 
-        if ($this->manager->getMaxSize() !== null) {
-            $headers['Tus-Max-Size'] = $this->manager->getMaxSize();
-        }
+        $response->headers->set('Tus-Resumable', self::TUS_VERSION);
+        $response->headers->set('Tus-Version', self::TUS_VERSION);
+        $response->headers->set('Tus-Extension', implode(',', self::EXTENSIONS));
 
-        return new Response('', Response::HTTP_NO_CONTENT, $headers);
+        $response->prepare($request);
+
+        return $response;
     }
 
     /**
      * Create an upload and return the patch url.
+     *
+     * @TODO validate required metadata
      */
-    public function createAction(Request $request)
+    public function create(Request $request)
     {
+        $response = new Response('', Response::HTTP_CREATED);
+
         $rawMeta = $request->headers->get('Upload-Metadata');
         $meta = MetadataParser::parse($rawMeta ?? '');
-
-        // @TODO validate required metadata
 
         $totalBytes = ($request->headers->get('Upload-Defer-Length') === 1)
             ? null
             : (int)$request->headers->get('Upload-Length');
-
-        if ($totalBytes === 0) {
-            return new Response("Invalid upload length: {$totalBytes} bytes.", Response::HTTP_BAD_REQUEST);
-        }
-
         $maxSize = $this->manager->getMaxSize();
-        if (false && $maxSize && $totalBytes > $maxSize) {
-            return new Response(
-                "The maximum entity size is {$maxSize} bytes.",
-                Response::HTTP_REQUEST_ENTITY_TOO_LARGE
-            );
-        } else {
-            $entity = $this->manager->createUpload();
-            $entity->setOriginalFilename($meta['name'] ?? null);
-            $entity->setMimeType($meta['type'] ?? null);
-            $entity->setTotalBytes($totalBytes);
-
-            // Create the file
-            // Btw, is this the right place to create the file?
-            // @TODO return an actual response in case of failure
-            if ( ! touch($entity->getPath())) {
-                throw new RuntimeException("Unable to create file: {$entity->getPath()}");
-            }
-
-            $this->manager->save($entity);
-
-            $response = new Response(
-                '', Response::HTTP_CREATED, [
-                    'Tus-Resumable' => self::TUS_VERSION,
-                    'Location' => $this->router->generate('tus_upload_patch', ['id' => $entity->getId()]),
-                ]
-            );
-
-            if ($entity->getExpiresAt()) {
-                $response->headers->set('Upload-Expires', $entity->getExpiresAt()->format(DATE_RFC7231));
-            }
-
-            return $response;
+        if ($totalBytes && $totalBytes > $maxSize) {
+            $response->setContent("The maximum entity size is {$maxSize} bytes.");
+            $response->setStatusCode(Response::HTTP_REQUEST_ENTITY_TOO_LARGE);
+            goto done;
         }
+
+        $entity = $this->manager->createUpload();
+        $entity->setOriginalFilename($meta['name'] ?? null);
+        $entity->setMimeType($meta['type'] ?? null);
+        $entity->setTotalBytes($totalBytes);
+        $this->manager->save($entity);
+
+        $response->headers->set('Tus-Resumable', self::TUS_VERSION);
+        $response->headers->set('Location', $this->router->generate('tus_upload_patch', ['id' => $entity->getId()]));
+
+        if ($entity->getExpiresAt()) {
+            $response->headers->set('Upload-Expires', $entity->getExpiresAt()->format(DATE_RFC7231));
+        }
+
+        done:
+        $response->prepare($request);
+
+        return $response;
     }
 
     /**
