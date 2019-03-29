@@ -10,9 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
-/**
- * @TODO Config max size (maybe it should be in the entity?)
- */
 class UploadController
 {
     const TUS_VERSION = '1.0.0';
