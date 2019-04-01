@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Felds\SizeStrToBytes\SizeStrToBytes;
 use Felds\TusServerBundle\Entity\AbstractUpload;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Request;
 
 final class UploadManager
 {
@@ -73,7 +74,7 @@ final class UploadManager
         }
     }
 
-    public function findUpload($id): AbstractUpload
+    public function findUpload($id): ?AbstractUpload
     {
         return $this->em->find($this->class, $id);
     }
@@ -90,5 +91,16 @@ final class UploadManager
     public function getMaxSize(): ?int
     {
         return $this->maxSize;
+    }
+
+    public function append(AbstractUpload $entity, Request $request): void
+    {
+        $f = fopen($entity->getPath(), 'a');
+        stream_copy_to_stream($request->getContent(true), $f);
+        fclose($f);
+
+        $entity->setUploadedBytes(filesize($entity->getPath()));
+
+        $this->save($entity);
     }
 }

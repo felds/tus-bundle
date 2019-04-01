@@ -99,25 +99,23 @@ class UploadController
      */
     public function send(Request $request, $id)
     {
+        $response = new Response('', Response::HTTP_NO_CONTENT);
+
         $entity = $this->manager->findUpload($id);
-
-        $f = fopen($entity->getPath(), 'a');
-        stream_copy_to_stream($request->getContent(true), $f);
-        fclose($f);
-
-        $entity->setUploadedBytes(filesize($entity->getPath()));
-
-        $this->manager->save($entity);
-
-        $headers = [
-            'Tus-Resumable' => self::TUS_VERSION,
-            'Upload-Offset' => $entity->getUploadedBytes(),
-        ];
-        if ($entity->getExpiresAt()) {
-            $headers['Upload-Expires'] = $entity->getExpiresAt()->format(DATE_RFC7231);
+        if (!$entity) {
+            return new Response('', Response::HTTP_NOT_FOUND);
         }
 
-        return new Response('', Response::HTTP_NO_CONTENT, $headers);
+        $this->manager->append($entity, $request);
+
+        $response->headers->set('Tus-Resumable', self::TUS_VERSION);
+        $response->headers->set('Upload-Offset', $entity->getUploadedBytes());
+
+        if ($entity->getExpiresAt()) {
+            $response->headers->set('Upload-Expires', $entity->getExpiresAt()->format(DATE_RFC7231));
+        }
+
+        return $response;
     }
 
     /**

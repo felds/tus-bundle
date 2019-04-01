@@ -7,3 +7,4 @@
 * [_] Return a `412 Precondition Failed` when protocols don't match
 * [_] How to deal with `X-HTTP-Method-Override`? Is it even possible with symfony?
 * [_] Return `415 Unsupported Media Type` when client sends content types other than `application/offset+octet-stream`
+* [_] Implement `410 Gone` when trying to access 
