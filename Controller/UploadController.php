@@ -7,6 +7,7 @@ use Felds\TusServerBundle\UploadManager;
 use Felds\TusServerBundle\Util\MetadataParser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 class UploadController
@@ -30,15 +31,16 @@ class UploadController
         $this->router = $router;
     }
 
-    public function options(Request $request)
+    /**
+     * @Route("/", methods={"OPTIONS"})
+     */
+    public function options()
     {
         $response = new Response('', Response::HTTP_NO_CONTENT);
 
         $response->headers->set('Tus-Resumable', self::TUS_VERSION);
         $response->headers->set('Tus-Version', self::TUS_VERSION);
         $response->headers->set('Tus-Extension', implode(',', self::EXTENSIONS));
-
-        $response->prepare($request);
 
         return $response;
     }
@@ -47,6 +49,7 @@ class UploadController
      * Create an upload and return the patch url.
      *
      * @TODO validate required metadata
+     * @Route("/", methods={"POST"})
      */
     public function create(Request $request)
     {
@@ -72,7 +75,7 @@ class UploadController
         $this->manager->save($entity);
 
         $response->headers->set('Tus-Resumable', self::TUS_VERSION);
-        $response->headers->set('Location', $this->router->generate('tus_upload_patch', ['id' => $entity->getId()]));
+        $response->headers->set('Location', $this->router->generate('felds_tusserver_upload_send', ['id' => $entity->getId()]));
 
         if ($entity->getExpiresAt()) {
             $response->headers->set('Upload-Expires', $entity->getExpiresAt()->format(DATE_RFC7231));
@@ -87,13 +90,14 @@ class UploadController
     /**
      * Send content to be appended to the upload.
      *
+     * @Route("/{id}", methods={"PATCH"})
      * @param Request $request
      * @param mixed $id
      * @return Response
      *
      * @TODO cut off the upload when it exceeds the declared length
      */
-    public function patchAction(Request $request, $id)
+    public function send(Request $request, $id)
     {
         $entity = $this->manager->findUpload($id);
 
@@ -119,11 +123,12 @@ class UploadController
     /**
      * Check the status of the upload.
      *
+     * @Route("/{id}", methods={"HEAD"})
      * @param Request $request
      * @param mixed $id
      * @return Response
      */
-    public function sendHeadAction(Request $request, $id)
+    public function sendHead(Request $request, $id)
     {
         $entity = $this->manager->findUpload($id);
 
@@ -145,11 +150,12 @@ class UploadController
     /**
      * Cancel the download and cleanup resources.
      *
+     * @Route("/{id}", methods={"DELETE"})
      * @param Request $request
      * @param mixed $id
      * @return Response
      */
-    public function deleteAction(Request $request, $id)
+    public function delete(Request $request, $id)
     {
         $entity = $this->manager->findUpload($id);
         $this->manager->remove($entity);

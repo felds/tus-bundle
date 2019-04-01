@@ -1,14 +1,19 @@
-tus_upload_options:
-    path: /
-    methods: [OPTIONS]
-    controller: FeldsTusServerBundle:Upload:options
+#tus_upload_options:
+#    path: /
+#    methods: [OPTIONS]
+#    controller: FeldsTusServerBundle:Upload:options
+#
+#tus_upload_create:
+#    path: /
+#    methods: [POST]
+#    controller: FeldsTusServerBundle:Upload:create
+#
+#tus_upload_patch:
+#    path: /{id}
+#    methods: [PATCH]
+#    controller: FeldsTusServerBundle:Upload:patch
 
-tus_upload_create:
-    path: /
-    methods: [POST]
-    controller: FeldsTusServerBundle:Upload:create
 
-tus_upload_patch:
-    path: /{id}
-    methods: [PATCH]
-    controller: FeldsTusServerBundle:Upload:patch
+tus_uploads:
+    type: annotation
+    resource: "../../Controller"
